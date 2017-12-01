@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TV Streaming</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+
+    <string name="banner_ad_unit_id">ca-app-pub-8903703979382343/6712392094</string>
+    <string name="no_data">No data</string>
+    <string name="banner_ad_video_id" >ca-app-pub-8903703979382343/7799556134</string>
+</resources>

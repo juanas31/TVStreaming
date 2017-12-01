@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "304059959637",
+    "firebase_url": "https://tvstreaming-ce0a6.firebaseio.com",
+    "project_id": "tvstreaming-ce0a6",
+    "storage_bucket": "tvstreaming-ce0a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:304059959637:android:da92be6467756c5f",
+        "android_client_info": {
+          "package_name": "com.giviews.tvstreaming"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "304059959637-ck078fohi4q16t449f81t4ojsovo172e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.giviews.tvstreaming",
+            "certificate_hash": "5b9514d97806e8556f80738edb1a1526cdfeff05"
+          }
+        },
+        {
+          "client_id": "304059959637-22fq3ltsiu6racpqagmf0v1lophkbmsg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5PHXVCarna6Qc_CXRlwcIcgLv7a6T-YI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "304059959637-22fq3ltsiu6racpqagmf0v1lophkbmsg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

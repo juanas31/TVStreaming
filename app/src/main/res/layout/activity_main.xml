@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary">
+
+    <!--<TextView-->
+        <!--android:id="@+id/android:title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="10dp"-->
+        <!--android:text="Live TV Streaming application"-->
+        <!--android:textColor="#FF0000FF" />-->
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal" >-->
+
+        <!--<EditText-->
+            <!--android:id="@+id/et_url"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/btn_play"-->
+            <!--android:hint="Type a valid url"-->
+            <!--android:visibility="invisible"-->
+            <!--android:text="Add"-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="42dp" />-->
+    <!--</LinearLayout>-->
+
+    <!--<GridView-->
+        <!--android:id="@+id/list_tv"-->
+        <!--android:numColumns="2"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:textColor="#fff"-->
+        <!--android:layout_height="match_parent">-->
+
+    <!--</GridView>-->
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/blog_list">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <!--<TextView-->
+        <!--android:id="@+id/empty"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center_vertical|center_horizontal"-->
+        <!--android:text="@string/no_data"-->
+        <!--android:textColor="#FF0000" />-->
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_ad_unit_id">
+    </com.google.android.gms.ads.AdView>
+
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adInterstitial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-8903703979382343/5285073432">
+    </com.google.android.gms.ads.AdView>
+
+</RelativeLayout>
