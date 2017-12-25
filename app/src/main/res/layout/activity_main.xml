@@ -5,57 +5,51 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary">
 
-    <!--<TextView-->
-        <!--android:id="@+id/android:title"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginBottom="10dp"-->
-        <!--android:text="Live TV Streaming application"-->
-        <!--android:textColor="#FF0000FF" />-->
+    <!--Slider-->
+    <RelativeLayout
+        android:id="@+id/layout_top"
+        android:layout_width="match_parent"
+        android:layout_height="150dp">
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal" >-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <!--<EditText-->
-            <!--android:id="@+id/et_url"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1" />-->
+            <com.giviews.tvstreaming._sliders.SliderView
+                android:id="@+id/sliderView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-        <!--<Button-->
-            <!--android:id="@+id/btn_play"-->
-            <!--android:hint="Type a valid url"-->
-            <!--android:visibility="invisible"-->
-            <!--android:text="Add"-->
-            <!--android:layout_width="60dp"-->
-            <!--android:layout_height="42dp" />-->
-    <!--</LinearLayout>-->
+        </FrameLayout>
 
-    <!--<GridView-->
-        <!--android:id="@+id/list_tv"-->
-        <!--android:numColumns="2"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:textColor="#fff"-->
-        <!--android:layout_height="match_parent">-->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_indicator"/>
 
-    <!--</GridView>-->
+        <LinearLayout
+            android:id="@+id/pagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"/>
 
+    </RelativeLayout>
+
+    <!--Recycler View-->
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/blog_list">
+        android:layout_below="@+id/layout_top"
+        android:layout_marginTop="1dp"
+        android:id="@+id/blog_list"
+        android:clipToPadding="false"
+        android:scrollbars="vertical">
 
     </android.support.v7.widget.RecyclerView>
-
-    <!--<TextView-->
-        <!--android:id="@+id/empty"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:gravity="center_vertical|center_horizontal"-->
-        <!--android:text="@string/no_data"-->
-        <!--android:textColor="#FF0000" />-->
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/adView"
@@ -70,12 +64,34 @@
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adInterstitial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-8903703979382343/5285073432">
     </com.google.android.gms.ads.AdView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
+        android:visibility="invisible"
+        android:id="@+id/offline_view">
+        <ImageView
+            android:id="@+id/offlineImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/ic_signal_wifi_off"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="150dp"/>
+        <TextView
+            android:layout_below="@+id/offlineImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:gravity="center"
+            android:text="Anda sedang Offline, Mohon periksa koneksi internet anda"/>
+    </RelativeLayout>
 
 </RelativeLayout>

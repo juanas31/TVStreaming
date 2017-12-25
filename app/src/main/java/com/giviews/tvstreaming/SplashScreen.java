@@ -18,12 +18,12 @@ public class SplashScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(FEATURE_NO_TITLE);
         setContentView(R.layout.splash_screen);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Thread myThread = new Thread() {
             @Override
             public void run() {
                 try {
-                    sleep(3000);
+                    sleep(1000);
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     startActivity(intent);
                     finish();

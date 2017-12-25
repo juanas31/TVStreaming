@@ -4,28 +4,39 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
+import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.giviews.tvstreaming._sliders.FragmentSlider;
+import com.giviews.tvstreaming._sliders.SliderIndicator;
+import com.giviews.tvstreaming._sliders.SliderPagerAdapter;
+import com.giviews.tvstreaming._sliders.SliderView;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.formats.NativeAdOptions;
+import com.google.android.gms.ads.formats.NativeAppInstallAd;
+import com.google.android.gms.ads.formats.NativeAppInstallAdView;
+import com.google.android.gms.ads.formats.NativeContentAd;
 import com.google.android.gms.ads.reward.RewardItem;
 import com.google.android.gms.ads.reward.RewardedVideoAd;
 import com.google.android.gms.ads.reward.RewardedVideoAdListener;
@@ -47,25 +58,78 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     private InterstitialAd mInterstitialAd;
     private RewardedVideoAd mRewardedVideoAd;
 
-//    @SuppressLint("SdCardPath")
-    @SuppressLint("WrongConstant")
+    private RelativeLayout offline_view;
+
+    //Slider
+    private SliderPagerAdapter mAdapter;
+    private SliderIndicator mIndicator;
+
+    private SliderView sliderView;
+    private LinearLayout mLinearLayout;
+
+    @SuppressLint("SdCardPath")
+//    @SuppressLint("WrongConstant")
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Slider
+        sliderView = (SliderView) findViewById(R.id.sliderView);
+        mLinearLayout = (LinearLayout) findViewById(R.id.pagesContainer);
+        setupSlider();
+
+        offline_view = findViewById(R.id.offline_view);
+
         // database
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Channel");
         mDatabase.keepSynced(true);
 
-        mBlogList = (RecyclerView) findViewById(R.id.blog_list);
-        mBlogList.setHasFixedSize(true);
-        mBlogList.setLayoutManager(new LinearLayoutManager(this));
+        mBlogList = findViewById(R.id.blog_list);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3    );
+        mBlogList.setLayoutManager(mLayoutManager);
+        mBlogList.setItemAnimator(new DefaultItemAnimator());
 
         //addmob
-        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+
+        final AdLoader adLoader = new AdLoader.Builder(this, "ca-app-pub-8903703979382343/5285073432")
+                .forAppInstallAd(new NativeAppInstallAd.OnAppInstallAdLoadedListener() {
+                    @Override
+                    public void onAppInstallAdLoaded(NativeAppInstallAd appInstallAd) {
+                        // Show the app install ad.
+
+//                        if (adLoader.isLoading()) {
+                            // The AdLoader is still loading ads.
+                            // Expect more adLoaded or onAdFailedToLoad callbacks.
+//                        } else {
+                            // The AdLoader has finished loading ads.
+//                        }
+                    }
+                })
+                .forContentAd(new NativeContentAd.OnContentAdLoadedListener() {
+                    @Override
+                    public void onContentAdLoaded(NativeContentAd contentAd) {
+                        // Show the content ad.
+                    }
+                })
+                .withAdListener(new AdListener() {
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        // Handle the failure by logging, altering the UI, and so on.
+                    }
+                })
+                .withNativeAdOptions(new NativeAdOptions.Builder()
+                        // Methods in the NativeAdOptions.Builder class can be
+                        // used here to specify individual options settings.
+                        .build())
+                .build();
+
+
+        adLoader.loadAd(new AdRequest.Builder().build());
+
 
         //Interstials Ads
         mInterstitialAd = new InterstitialAd(this);
@@ -75,10 +139,11 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-                finish();
+//                finish();
             }
         });
-//        showInterstitial();
+
+
 
         // VideoReward Ads
         mRewardedVideoAd = MobileAds.getRewardedVideoAdInstance(MainActivity.this);
@@ -89,98 +154,8 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
             mRewardedVideoAd.show();
         }
 
-        //declarasi Variable
-//        list = (GridView) findViewById(R.id.list_tv);
-
-        //membuat Array
-//        final String channel[] = {
-//                "https://kmklive-lh.akamaihd.net/i/trans7_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/transtv_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/sctv_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/indosiar_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "http://ott.tvri.co.id/Content/HLS/Live/Channel(TVRINasional)/Stream(04)/index.m3u8",
-//                "https://kmklive-lh.akamaihd.net/i/jaktv_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/rcti_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/antv_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/inewstv_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/globaltv_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/mnctv_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/ochannel_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/metrotv_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/tvone_live@577566/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/rtv_live@137568/index_144_av-p.m3u8?sd=10&rebase=on",
-//                "https://kmklive-lh.akamaihd.net/i/dwtv_live@137568/index_270_av-p.m3u8?sd=10&rebase=on",
-//                "http://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIdki)/Stream(01)/index.m3u8",
-//                "http://ott.tvri.co.id/Content/HLS/Live/Channel(TVRI3)/Stream(02)/index.m3u8",
-//                "http://ott.tvri.co.id/Content/HLS/Live/Channel(TVRI4)/Stream(01)/index.m3u8",
-//                "http://ott.tvri.co.id/Content/HLS/Live/Channel(TVRIjabarbandung)/Stream(01)/index.m3u8"
-//        };
-
-        //membuat Array
-//        final String nama[] = {
-//                "TRANS7",
-//                "TRANSTV",
-//                "SCTV",
-//                "INDOSIAR",
-//                "TVRI Nasional",
-//                "JAK TV",
-//                "RCTI",
-//                "ANTV",
-//                "INEWS TV",
-//                "GTV",
-//                "MNC TV",
-//                "O CHANNEL",
-//                "METRO TV",
-//                "TV ONE",
-//                "RTV",
-//                "DW TV",
-//                "TVRI DKI Jakarta",
-//                "TVRI Budaya",
-//                "TVRI Olahraga",
-//                "TVRI Jawa Barat"
-//        };
-
-//        final int gambar[] = {
-//                R.drawable.trans7,
-//                R.drawable.transtv,
-//                R.drawable.sctv,
-//                R.drawable.indosiar,
-//                R.drawable.tvri,
-//                R.drawable.jaktv,
-//                R.drawable.rcti,
-//                R.drawable.antv,
-//                R.drawable.inews,
-//                R.drawable.gtv,
-//                R.drawable.mnc,
-//                R.drawable.ochannel,
-//                R.drawable.metrotv,
-//                R.drawable.tvone,
-//                R.drawable.rtv,
-//                R.drawable.dwtv,
-//                R.drawable.tvri,
-//                R.drawable.tvri,
-//                R.drawable.tvri,
-//                R.drawable.tvri
-//        };
-
-//        CustomListAdapter adapter = new CustomListAdapter(this,channel,gambar,nama);
-//        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mList);
-//        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, nama);
-//        list.setAdapter(arrayAdapter);
-
         if(CheckNetwork.isInternetAvailable(MainActivity.this)) {
-            //do something.
-//            mBlogList.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    Intent kirimdata = new Intent(MainActivity.this,PlayerActivity.class);
-//                    kirimdata.putExtra("url",mBlogList.getUrl());
-//                    kirimdata.putExtra("nama",model.getTitle());
-//                    kirimdata.putExtra("gambar",model.getImage);
-//
-//                    startActivity(kirimdata);
-//                }
-//            });
+
         } else {
             Toast.makeText(MainActivity.this,"No Internet Connection",Toast.LENGTH_LONG).show();
         }
@@ -191,13 +166,13 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }else {
-            finish();
+//            finish();
         }
     }
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        super.onBackPressed();
         showInterstitial();
     }
 
@@ -267,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
     protected void onStart() {
         if(CheckNetwork.isInternetAvailable(MainActivity.this)) {
             //lanjut
+            offline_view.setVisibility(View.INVISIBLE);
             FirebaseRecyclerAdapter<Model, ModelViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Model, ModelViewHolder>(
                     Model.class,
                     R.layout.blog_row,
@@ -283,13 +259,13 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
                     final String title = model.getTitle();
                     final String gambar = model.getImage();
 
-                    mBlogList.setOnClickListener(new View.OnClickListener() {
+                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             Intent kirimdata = new Intent(MainActivity.this,PlayerActivity.class);
                             kirimdata.putExtra("url", url);
                             kirimdata.putExtra("nama", title);
-                            kirimdata.putExtra("gambar", gambar);
+//                            kirimdata.putExtra("gambar", gambar);
 
                             startActivity(kirimdata);
                         }
@@ -299,8 +275,12 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
 
             mBlogList.setAdapter(firebaseRecyclerAdapter);
         }else {
-            Toast.makeText(MainActivity.this,"No Internet Connection", Toast.LENGTH_LONG).show();
+//            Toast.makeText(MainActivity.this,"No Internet Connection", Toast.LENGTH_LONG).show();
+            offline_view.setVisibility(View.VISIBLE);
         }
+
+        setupSlider();
+
         super.onStart();
     }
 
@@ -314,13 +294,13 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
         }
 
         public void setTitle(String title){
-            TextView post_title = (TextView) mView.findViewById(R.id.post_title);
+            TextView post_title = mView.findViewById(R.id.post_title);
             post_title.setText(title);
         }
 
         public void setImage(final Context ctx, final String image) {
-            final ImageView image_post = (ImageView) mView.findViewById(R.id.post_image);
-            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).into(image_post, new Callback() {
+            final ImageView image_post = mView.findViewById(R.id.post_image);
+            Picasso.with(ctx).load(image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.ic_live_tv_black).into(image_post, new Callback() {
                 @Override
                 public void onSuccess() {
 
@@ -332,5 +312,45 @@ public class MainActivity extends AppCompatActivity implements RewardedVideoAdLi
                 }
             });
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.demo, menu);
+
+        MenuItem search = menu.findItem(R.id.action_search);
+//        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+//        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) this);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_search:
+                onSearchRequested();
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void setupSlider() {
+        sliderView.setDurationScroll(800);
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(FragmentSlider.newInstance("http://www.menucool.com/slider/prod/image-slider-1.jpg"));
+        fragments.add(FragmentSlider.newInstance("http://www.menucool.com/slider/prod/image-slider-2.jpg"));
+        fragments.add(FragmentSlider.newInstance("http://www.menucool.com/slider/prod/image-slider-3.jpg"));
+        fragments.add(FragmentSlider.newInstance("http://www.menucool.com/slider/prod/image-slider-4.jpg"));
+
+        mAdapter = new SliderPagerAdapter(getSupportFragmentManager(), fragments);
+        sliderView.setAdapter(mAdapter);
+        mIndicator = new SliderIndicator(this, mLinearLayout, sliderView, R.drawable.indicator_circle);
+        mIndicator.setPageCount(fragments.size());
+        mIndicator.show();
     }
 }

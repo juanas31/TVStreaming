@@ -79,16 +79,16 @@ public class PlayerActivity extends Activity implements PlayerView.OnChangeListe
 
 		mPlayerView = (PlayerView) findViewById(R.id.pv_video);
 
-		//第二步：设置参数，毫秒为单位
-		mPlayerView.setNetWorkCache(20000);
+		//
+		mPlayerView.setNetWorkCache(2000);
 
-		//第三步:初始化播放器
+		//
 		mPlayerView.initPlayer(mUrl);
 
-		//第四步:设置事件监听，监听缓冲进度等
+		//
 		mPlayerView.setOnChangeListener(this);
 
-		//第五步：开始播放
+		//
 		mPlayerView.start();
 
 		//init view
